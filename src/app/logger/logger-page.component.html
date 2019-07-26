@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      EcoTrack
+      <ion-icon (click)="presentInfoToast()"
+                class="ion-float-right"
+                name="information-circle-outline"
+      ></ion-icon>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-grid>
+    <div class="ion-padding">
+      <app-logger [FuelLog]="FuelLog"></app-logger>
+      <ion-row>
+        <ion-button (click)="reset()">delete file</ion-button>
+        <br/>
+        <ion-button (click)="output()">display</ion-button>
+        <br/>
+      </ion-row>
+      <ion-row>
+        <ul #logs>
+          <li *ngFor="let msg of (logger.Messages | async)" class="logger-li">{{msg}}</li>
+        </ul>
+      </ion-row>
+    </div>
+  </ion-grid>
+
+</ion-content>

@@ -1,5 +1,5 @@
 {
-  "appId": "org.ecotrack.klek",
+  "appId": "org.klek.ecotrack",
   "appName": "EcoTrack",
   "bundledWebRuntime": false,
   "npmClient": "npm",

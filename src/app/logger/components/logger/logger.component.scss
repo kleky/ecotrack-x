@@ -1,0 +1,44 @@
+$stop-add-fontsize: 1.3em;
+
+.mileage-input {
+  font-size: $stop-add-fontsize;
+}
+.fuel-input {
+  font-size: $stop-add-fontsize;
+}
+
+.mileage-list {
+  padding: 0 1em 0 0;
+  font-size: $stop-add-fontsize;
+}
+
+.fuel-list {
+  padding: 0 1em 0 0.2em;
+  font-size: $stop-add-fontsize;
+}
+
+.full-width {
+  width: 100%;
+  text-align: center;
+}
+
+.economy-widget {
+  color: #383a3e;
+  border: 0.1em grey solid;
+  border-radius: 1em;
+  padding: 0.7em;
+  margin: 0 auto;
+}
+
+.economy-widget > label {
+  padding: 0.2em;
+}
+
+.center {
+  align-content: center;
+}
+
+.logged-date {
+  font-size: 0.7em;
+  padding: 0 0.5em 0 0;
+}

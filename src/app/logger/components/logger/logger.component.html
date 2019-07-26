@@ -1,0 +1,54 @@
+<ng-container *ngIf="fuelEconomy > 0">
+    <ion-row>
+        <span class="economy-widget">{{ fuelEconomy | number: '1.1-1' }} mpg</span>
+    </ion-row>
+</ng-container>
+<ion-row>
+    <ion-item>
+        <ion-icon name="car"></ion-icon>
+        <ion-label>Mileage</ion-label>
+        <ion-input [(ngModel)]="newFuelStop.mileage"
+                   class="mileage-input"
+                   type="number"
+                   placeholder="current mileage"></ion-input>
+    </ion-item>
+</ion-row>
+<ion-row>
+    <ion-col size="10">
+        <ion-item>
+            <ion-icon name="color-fill"></ion-icon>
+            <ion-label>Litres</ion-label>
+            <ion-input [(ngModel)]="newFuelStop.fuel"
+                       class="fuel-input"
+                       type="number"
+                       placeholder="litres added"></ion-input>
+        </ion-item>
+    </ion-col>
+</ion-row>
+<ion-row>
+    <ion-button [disabled]="!newStopIsValid()" class="button full-width" (click)="saveStop()">Add</ion-button>
+</ion-row>
+
+<ion-row>
+    <ion-list-header>
+        <ion-label>Fuel Stops</ion-label>
+    </ion-list-header>
+    <ion-list *ngIf="(FuelLog | async) as fuelLog">
+        <ng-container *ngIf="fuelLog.fuelStops.length > 0; else noData">
+            <ion-item *ngFor="let fuelStop of fuelLog.fuelStops">
+                <span class="logged-date">{{fuelStop.dateAddedUtc | dateLogged}}</span>
+                <ion-icon name="car"></ion-icon>
+                <span class="mileage-list">{{ fuelStop.mileage | number }}</span>
+                <ion-icon name="color-fill"></ion-icon>
+                <span class="fuel-list">{{fuelStop.fuel | number }}</span>
+                <ion-button fill="outline" (click)="removeStop(fuelStop)">Remove</ion-button>
+            </ion-item>
+        </ng-container>
+    </ion-list>
+</ion-row>
+
+<ng-template #noData>
+    <ion-badge color="medium">nothing logged</ion-badge>
+</ng-template>
+
+
