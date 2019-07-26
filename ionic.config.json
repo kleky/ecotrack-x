@@ -1,6 +1,8 @@
 {
   "name": "ecotrack-x",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular",
   "id": "b654d6e4"
 }
