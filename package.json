@@ -2,7 +2,7 @@
   "name": "ecotrack-x",
   "version": "0.0.1",
   "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "homepage": "https://klek.org.uk/ecotrack",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -29,6 +29,8 @@
     "@ionic/pro": "2.0.4",
     "@ionic/storage": "^2.2.0",
     "core-js": "^2.5.4",
+    "ionic-configuration-service": "^6.0.0",
+    "ionic-logging-service": "^7.0.0",
     "moment": "^2.24.0",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",

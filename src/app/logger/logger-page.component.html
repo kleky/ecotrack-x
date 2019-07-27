@@ -10,7 +10,6 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
   <ion-grid>
     <div class="ion-padding">
@@ -20,11 +19,6 @@
         <br/>
         <ion-button (click)="output()">display</ion-button>
         <br/>
-      </ion-row>
-      <ion-row>
-        <ul #logs>
-          <li *ngFor="let msg of (logger.Messages | async)" class="logger-li">{{msg}}</li>
-        </ul>
       </ion-row>
     </div>
   </ion-grid>

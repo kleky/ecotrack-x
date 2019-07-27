@@ -1,24 +1,28 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {UserDataStore} from '../../data-stores/user-data/UserDataStore';
-import {FuelLog} from '../../models/FuelLog';
-import {FuelStop} from '../../models/FuelStop';
-import {FileStore} from '../../services/file-store.service';
-import {LogService} from '../../services/log.service';
+import {Component, Input, OnInit} from "@angular/core";
+import {BehaviorSubject} from "rxjs";
+import {UserDataStore} from "../../data-stores/user-data/UserDataStore";
+import {FuelLog} from "../../models/FuelLog";
+import {FuelStop} from "../../models/FuelStop";
+import {FileStore} from "../../services/file-store.service";
+import {LogService} from "../../services/log.service";
+import {Logger} from "ionic-logging-service";
 
 @Component({
-    selector: 'app-logger',
-    templateUrl: './logger.component.html',
-    styleUrls: ['./logger.component.scss'],
+    selector: "app-logger",
+    templateUrl: "./logger.component.html",
+    styleUrls: ["./logger.component.scss"],
 })
 export class LoggerComponent implements OnInit {
 
     @Input() FuelLog: BehaviorSubject<FuelLog>;
     public newFuelStop: FuelStop;
     public fuelEconomy: number;
+    private logger: Logger;
 
     constructor(private store: FileStore<UserDataStore>,
-                private logger: LogService) {}
+                private logService: LogService) {
+        this.logger = this.logService.getLogger(`LoggerComponent`);
+    }
 
     ngOnInit() {
         this.FuelLog.subscribe(() => {
@@ -34,7 +38,7 @@ export class LoggerComponent implements OnInit {
     renderEconomy() {
         if (this.FuelLog.getValue().fuelStops.length > 1) {
             this.fuelEconomy = this.calculatedEconomy(this.FuelLog.getValue().fuelStops);
-            this.logger.log('[LOGGER] Economy calculated as ' + this.fuelEconomy);
+            this.logger.debug("renderEconomy", "Economy calculated as " + this.fuelEconomy);
         } else {
             this.fuelEconomy = null;
         }
@@ -66,7 +70,7 @@ export class LoggerComponent implements OnInit {
         } else {
             this.newFuelStop = new FuelStop();
         }
-        this.logger.log(`[LOGGER] Load new stop`, this.newFuelStop);
+        this.logger.debug("loadNewStop", this.newFuelStop);
     }
 
     removeStop(fuelStop: FuelStop) {
