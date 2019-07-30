@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      EcoTrack
+      Fuel Logger
       <ion-icon (click)="presentInfoToast()"
                 class="ion-float-right"
                 name="information-circle-outline"
@@ -14,12 +14,6 @@
   <ion-grid>
     <div class="ion-padding">
       <app-logger [FuelLog]="FuelLog"></app-logger>
-      <ion-row>
-        <ion-button (click)="reset()">delete file</ion-button>
-        <br/>
-        <ion-button (click)="output()">display</ion-button>
-        <br/>
-      </ion-row>
     </div>
   </ion-grid>
 
