@@ -19,7 +19,7 @@ export class DateLoggedPipe implements PipeTransform {
    * For date a fuel debug was logged
    * @param value Date number in UTC
    */
-  transform(value: number): string {
+  transform(value: string): string {
     const date = moment(value);
     this.logger.debug("DateLoggedPipe", value, date.toISOString());
     return date.format("YYYYMMDD") === moment().format("YYYYMMDD")
