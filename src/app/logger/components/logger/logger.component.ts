@@ -66,7 +66,7 @@ export class LoggerComponent implements OnInit {
 
     loadNewStop() {
         if (this.FuelLog.getValue().GetLastFuelStop()) {
-            this.newFuelStop = new FuelStop(this.FuelLog.getValue().GetLastFuelStop());
+            this.newFuelStop = FuelStop.CreateFrom(this.FuelLog.getValue().GetLastFuelStop());
         } else {
             this.newFuelStop = new FuelStop();
         }
