@@ -1,39 +1,49 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { TabsPage } from './tabs.page';
+import {NgModule} from "@angular/core";
+import {RouterModule, Routes} from "@angular/router";
+import {TabsPage} from "./tabs.page";
 
 const routes: Routes = [
-  {
-    path: 'tabs',
-    component: TabsPage,
-    children: [
-      {
-        path: 'logger',
+    {
+        path: "tabs",
+        component: TabsPage,
         children: [
+            {
+                path: "logger",
+                children: [
+                    {
+                        path: "",
+                        loadChildren: "../logger/logger.module#LoggerModule"
+                    }
+                ]
+            },
           {
-            path: '',
-            loadChildren: '../logger/logger.module#LoggerModule'
-          }
+            path: "speed-timer",
+            children: [
+              {
+                path: "",
+                loadChildren: "../speed-timer/speed-timer.module#SpeedTimerModule"
+              }
+            ]
+          },
+            {
+                path: "",
+                redirectTo: "/tabs/logger",
+                pathMatch: "full"
+            }
         ]
-      },
-      {
-        path: '',
-        redirectTo: '/tabs/logger',
-        pathMatch: 'full'
-      }
-    ]
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/logger',
-    pathMatch: 'full'
-  }
+    },
+    {
+        path: "",
+        redirectTo: "/tabs/logger",
+        pathMatch: "full"
+    }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [RouterModule]
+    imports: [
+        RouterModule.forChild(routes)
+    ],
+    exports: [RouterModule]
 })
-export class TabsPageRoutingModule {}
+export class TabsPageRoutingModule {
+}

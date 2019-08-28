@@ -1,7 +1,7 @@
 {
-  "name": "ecotrack-x",
-  "version": "0.0.1",
-  "author": "Ionic Framework",
+  "name": "EcoTrack",
+  "version": "1.1.0",
+  "author": "Ian Klek",
   "homepage": "https://klek.org.uk/ecotrack",
   "scripts": {
     "ng": "ng",
@@ -65,5 +65,5 @@
     "tslint": "~5.17.0",
     "typescript": "~3.1.6"
   },
-  "description": "An Ionic project"
+  "description": "Fuel tracker"
 }

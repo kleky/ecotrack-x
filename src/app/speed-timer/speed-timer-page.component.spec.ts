@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SpeedTimerPageComponent } from './speed-timer-page.component';
+import { SpeedTimerPage } from './speed-timer-page.component';
 
 describe('SpeedTimerComponent', () => {
-  let component: SpeedTimerPageComponent;
-  let fixture: ComponentFixture<SpeedTimerPageComponent>;
+  let component: SpeedTimerPage;
+  let fixture: ComponentFixture<SpeedTimerPage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SpeedTimerPageComponent ],
+      declarations: [ SpeedTimerPage ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SpeedTimerPageComponent);
+    fixture = TestBed.createComponent(SpeedTimerPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

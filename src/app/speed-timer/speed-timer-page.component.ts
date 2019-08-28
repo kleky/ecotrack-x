@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './speed-timer-page.component.html',
   styleUrls: ['./speed-timer-page.component.scss'],
 })
-export class SpeedTimerPageComponent implements OnInit {
+export class SpeedTimerPage implements OnInit {
 
   constructor() { }
 
