@@ -13,6 +13,6 @@ import {LoggerPage} from "../logger/logger-page.component";
   declarations: [ClockComponent],
   entryComponents: [
       ClockComponent,
-  ]
+  ],
 })
 export class SpeedTimerModule { }
