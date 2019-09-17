@@ -11,20 +11,33 @@ import {Geolocation, GeolocationPosition} from "@capacitor/core";
 })
 export class ClockComponent implements OnInit {
 
+    clockStarted: boolean;
+    speed: number = null;
     private logger: Logger;
-    speed: number;
+    private geoWatchId: string;
 
     constructor(private logService: LogService) {
         this.logger = this.logService.getLogger(`Clock`);
     }
 
     ngOnInit() {
-        Geolocation.watchPosition({
+    }
+
+    startStopClick(): void {
+        if (this.clockStarted) {
+          Geolocation
+              .clearWatch({ id: this.geoWatchId })
+              .then(_ => this.clockStarted = false)
+              .catch(e => this.logger.error("Failed to clear geolocation watch", e));
+        } else {
+          this.geoWatchId = Geolocation.watchPosition({
             enableHighAccuracy: true,
             timeout: 6000,
             maximumAge: 6000,
             requireAltitude: false,
-        }, this.updatePosition);
+          }, this.updatePosition);
+          this.clockStarted = true;
+        }
     }
 
     updatePosition = (position: GeolocationPosition, err?: any) => {
@@ -32,7 +45,7 @@ export class ClockComponent implements OnInit {
             console.error("Error updating position", err);
         } else {
             console.log("Updating position", position);
-            this.speed = data.coords.speed;
+            this.speed = position.coords.speed;
         }
     }
 

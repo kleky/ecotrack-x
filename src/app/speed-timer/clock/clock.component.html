@@ -1,1 +1,16 @@
-<span class="speed">{{speed}}</span>
+
+<ion-card [disabled]="!clockStarted">
+    <ion-card-header>
+        <ion-card-title>Speed</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content class="ion-text-center">
+        <span class="speed">{{speed || 0}}</span>
+    </ion-card-content>
+</ion-card>
+
+<ion-button expand="block"
+            (click)="startStopClick()">
+    <ion-ripple-effect></ion-ripple-effect>
+    {{clockStarted ? "Stop" : "Start"}}
+</ion-button>
