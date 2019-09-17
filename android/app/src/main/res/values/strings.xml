@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">ecotrack-x</string>
-    <string name="title_activity_main">ecotrack-x</string>
+    <string name="app_name">EcoTrack</string>
+    <string name="title_activity_main">EcoTrack</string>
     <string name="package_name">uk.klek.ecotrack</string>
     <string name="fileprovider_authority">uk.klek.ecotrack.fileprovider</string>
     <string name="custom_url_scheme">uk.klek.ecotrack</string>
