@@ -32,8 +32,8 @@ export class ClockComponent implements OnInit {
         } else {
           this.geoWatchId = Geolocation.watchPosition({
             enableHighAccuracy: true,
-            timeout: 6000,
-            maximumAge: 6000,
+            timeout: 30000,
+            maximumAge: 27000,
             requireAltitude: false,
           }, this.updatePosition);
           this.clockStarted = true;

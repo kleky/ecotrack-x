@@ -5,6 +5,7 @@ import {RouterModule} from "@angular/router";
 import {SpeedTimerPage} from "./speed-timer-page.component";
 import {IonicModule} from "@ionic/angular";
 import {Geolocation} from "@ionic-native/geolocation/ngx";
+import {ToMphPipe} from "../pipes/to-mph.pipe";
 
 @NgModule({
   imports: [
@@ -12,9 +13,8 @@ import {Geolocation} from "@ionic-native/geolocation/ngx";
     CommonModule,
     CommonModule,
     RouterModule.forChild([{path: "", component: SpeedTimerPage}])
-
   ],
-  declarations: [ClockComponent, SpeedTimerPage],
+  declarations: [ClockComponent, SpeedTimerPage, ToMphPipe],
   providers: [Geolocation]
 })
 export class SpeedTimerModule { }

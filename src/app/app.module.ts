@@ -12,13 +12,14 @@ import {IonicStorageModule} from "@ionic/storage";
 import {ConfigurationService} from "ionic-configuration-service";
 import {LoggingService, LoggingServiceModule} from "ionic-logging-service";
 import {environment} from "../environments/environment";
+import { ToMphPipe } from "./pipes/to-mph.pipe";
 
 export function configureLogging(loggingService: LoggingService): () => void {
     return () => loggingService.configure(environment.logging);
 }
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [AppComponent, ToMphPipe],
     entryComponents: [],
     imports: [
         BrowserModule,
@@ -39,6 +40,9 @@ export function configureLogging(loggingService: LoggingService): () => void {
             useFactory: configureLogging
         }
 
+    ],
+    exports: [
+        ToMphPipe
     ],
     bootstrap: [AppComponent]
 })

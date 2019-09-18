@@ -5,7 +5,7 @@
     </ion-card-header>
 
     <ion-card-content class="ion-text-center">
-        <span class="speed">{{speed || 0}}</span>
+        <span class="speed">{{(speed || 0) | toMph}}</span>
     </ion-card-content>
 </ion-card>
 
