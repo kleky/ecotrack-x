@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import {ClockComponent} from "./clock/clock.component";
 import {RouterModule} from "@angular/router";
 import {SpeedTimerPage} from "./speed-timer-page.component";
@@ -15,6 +15,7 @@ import {ToMphPipe} from "../pipes/to-mph.pipe";
     RouterModule.forChild([{path: "", component: SpeedTimerPage}])
   ],
   declarations: [ClockComponent, SpeedTimerPage, ToMphPipe],
-  providers: [Geolocation]
+  providers: [Geolocation],
+  exports: [ToMphPipe],
 })
 export class SpeedTimerModule { }

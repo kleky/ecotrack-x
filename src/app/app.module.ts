@@ -19,7 +19,7 @@ export function configureLogging(loggingService: LoggingService): () => void {
 }
 
 @NgModule({
-    declarations: [AppComponent, ToMphPipe],
+    declarations: [AppComponent],
     entryComponents: [],
     imports: [
         BrowserModule,
@@ -40,9 +40,6 @@ export function configureLogging(loggingService: LoggingService): () => void {
             useFactory: configureLogging
         }
 
-    ],
-    exports: [
-        ToMphPipe
     ],
     bootstrap: [AppComponent]
 })
