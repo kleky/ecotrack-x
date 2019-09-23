@@ -15,6 +15,7 @@ export class ClockComponent implements OnInit {
     speed: number = null;
     private logger: Logger;
     private geoWatchId: string;
+    mph = true;
 
     constructor(private logService: LogService) {
         this.logger = this.logService.getLogger(`Clock`);
@@ -39,7 +40,6 @@ export class ClockComponent implements OnInit {
           this.clockStarted = true;
         }
     }
-
     updatePosition = (position: GeolocationPosition, err?: any) => {
         if (err) {
             console.error("Error updating position", err);
