@@ -32,7 +32,7 @@ export class LoggerComponent implements OnInit {
     }
 
     newStopIsValid(): boolean {
-        return this.newFuelStop.fuel > 0;
+        return this.newFuelStop.mileage > 0;
     }
 
     renderEconomy() {
@@ -77,5 +77,29 @@ export class LoggerComponent implements OnInit {
         const entry = this.FuelLog.getValue();
         entry.RemoveFuelStop(fuelStop);
         this.FuelLog.next(entry);
+    }
+    edits: number[] = [];
+
+    isFuelStopUnderEdit(index: number): boolean {
+        return this.edits.includes(index);
+    }
+
+    alertClick(i: number) {
+        this.edits.push(i);
+    }
+
+    saveEdit(fuelLog: FuelLog, i: number) {
+        this.FuelLog.next(fuelLog);
+        this.edits.splice(
+            this.edits.findIndex(e => e === i),
+            1);
+    }
+
+    cancelEdit($event: MouseEvent, i: number, fuelStop: FuelStop) {
+        this.edits.splice(
+            this.edits.findIndex(e => e === i),
+            1);
+        alert(parseFloat($event.srcElement.attributes.getNamedItem("data-fuel").value))
+        fuelStop.fuel = parseFloat($event.srcElement.attributes.getNamedItem("data-fuel").value);
     }
 }

@@ -35,13 +35,34 @@
     </ion-list-header>
     <ion-list *ngIf="(FuelLog | async) as fuelLog">
         <ng-container *ngIf="fuelLog.fuelStops.length > 0; else noData">
-            <ion-item *ngFor="let fuelStop of fuelLog.fuelStops">
+            <ion-item *ngFor="let fuelStop of fuelLog.fuelStops; let i = index;">
                 <span class="logged-date">{{fuelStop.dateAddedUtc | dateLogged}}</span>
                 <ion-icon name="car"></ion-icon>
                 <span class="mileage-list">{{ fuelStop.mileage | number }}</span>
                 <ion-icon name="color-fill"></ion-icon>
-                <span class="fuel-list">{{fuelStop.fuel | number }}</span>
-                <ion-button fill="outline" (click)="removeStop(fuelStop)">Remove</ion-button>
+                <span class="fuel-list"
+                      id="fuel{{i}}"
+                      *ngIf="!edits.includes(i)"
+                      [attr.data-fuel]="fuelStop.fuel"
+                      (click)="alertClick(i)">{{fuelStop.fuel | number }}</span>
+
+                <ion-button fill="outline"
+                            *ngIf="!isFuelStopUnderEdit(i)"
+                            (click)="removeStop(fuelStop)"
+                >Remove</ion-button>
+                <ng-container *ngIf="isFuelStopUnderEdit(i)">
+                    <ion-input type="number"
+                               [(ngModel)]="fuelStop.fuel"></ion-input>
+                    <ion-button fill="outline"
+
+                                (click)="saveEdit(fuelLog, i)"
+                    >Save</ion-button>
+<!--                    <ion-button fill="outline"-->
+<!--                                *ngIf="edits.includes(i)"-->
+<!--                                [attr.data-fuel]="fuelStop.fuel"-->
+<!--                                (click)="cancelEdit($event, i, fuelStop)"-->
+<!--                    >Cancel</ion-button>-->
+                </ng-container>
             </ion-item>
         </ng-container>
     </ion-list>
