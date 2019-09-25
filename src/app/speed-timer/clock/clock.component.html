@@ -8,10 +8,35 @@
         <span class="speed">{{(speed || 0) | toMph}}</span>
         <span class="speed-units">mph</span>
     </ion-card-content>
+
 </ion-card>
+
+<ion-card [disabled]="!clockStarted">
+    <ion-card-header>
+        <ion-card-title>Average</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content class="ion-text-center">
+        <span class="average-speed">{{(average || 0) | toMph}}</span>
+        <span class="speed-units">mph</span>
+    </ion-card-content>
+    <ion-card-content class="ion-text-center">
+        <span>{{elapsedTime}}</span>
+        <span class="seconds"> seconds</span>
+    </ion-card-content>
+
+</ion-card>
+
 
 <ion-button expand="block"
             (click)="startStopClick()">
     <ion-ripple-effect></ion-ripple-effect>
     {{clockStarted ? "Stop" : "Start"}}
+</ion-button>
+
+<ion-button *ngIf="clockStarted"
+            expand="block"
+            (click)="reset()">
+    <ion-ripple-effect></ion-ripple-effect>
+    Reset
 </ion-button>
