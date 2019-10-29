@@ -1,9 +1,11 @@
-import {Component} from "@angular/core";
+import {Component, EventEmitter} from "@angular/core";
 import {Logger} from "ionic-logging-service";
 import {LogService} from "../../logger/services/log.service";
 import {Geolocation, GeolocationPosition} from "@capacitor/core";
 import {Subscription, timer} from "rxjs";
 import {takeWhile} from "rxjs/operators";
+import { getDistance } from "geolib";
+
 
 @Component({
     selector: "app-clock",
@@ -20,8 +22,8 @@ export class ClockComponent  {
     average: number;
     startTime: number;
     eggTimer: Subscription;
-    elapsedTime = 0;
-    distance: { distance: number, lat: number, lng: number }[] = [];
+    elapsedTime: EventEmitter<number> = new EventEmitter<number>();
+    distanceMeters: { distance: number, lat: number, lng: number }[] = [];
 
     constructor(private logService: LogService) {
         this.logger = this.logService.getLogger(`Clock`);
@@ -32,11 +34,14 @@ export class ClockComponent  {
         this.eggTimer = timer(0, 1000)
             .pipe(takeWhile(_ => this.clockStarted))
             .subscribe(time => {
-                this.elapsedTime = time;
-                this.average = this.distance.length ? this.distance
-                    .map(e => e.distance)
-                    .reduce((prev, curr) => prev + curr) / time : 0;
+                this.elapsedTime.emit(time);
             });
+    }
+
+    private sampleAverage(time: number) {
+        this.average = this.distanceMeters.length
+            ? this.distanceMeters.map(e => e.distance).reduce((prev, curr) => prev + curr) / (time / 3600)
+            : 0;
     }
 
     startStopClick(): void {
@@ -60,7 +65,7 @@ export class ClockComponent  {
 
     reset(): void {
         this.eggTimer.unsubscribe();
-        this.distance = [];
+        this.distanceMeters = [];
         this.startTimer();
     }
 
@@ -70,9 +75,9 @@ export class ClockComponent  {
         } else {
             this.logger.debug("updatePosition", "", position);
             this.speed = position.coords.speed;
-            const lastDistance = this.distance[this.distance.length - 1];
-            this.distance.push({
-                distance: lastDistance ? this.getDistanceFromLatLonInKm(
+            const lastDistance = this.distanceMeters.length ? this.distanceMeters[this.distanceMeters.length - 1] : null;
+            this.distanceMeters.push({
+                distance: lastDistance ? this.getDistanceFromLatLonInMeters(
                     lastDistance.lat,
                     lastDistance.lng,
                     position.coords.latitude,
@@ -83,17 +88,10 @@ export class ClockComponent  {
         }
     }
 
-    private getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-        const R = 6371; // Radius of the earth in km
-        const dLat = this.deg2rad(lat2 - lat1);  // deg2rad below
-        const dLon = this.deg2rad(lon2 - lon1);
-        const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        ;
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return (R * c) / 1.609344;  // Distance in miles
+    private getDistanceFromLatLonInMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+        return  getDistance({latitude: lat1, longitude: lon1},
+            {latitude: lat2, longitude: lon2}, 1);
+
     }
 
     private deg2rad(deg: number): number {

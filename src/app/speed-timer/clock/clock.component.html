@@ -21,7 +21,8 @@
         <span class="speed-units">mph</span>
     </ion-card-content>
     <ion-card-content class="ion-text-center">
-        <span>{{elapsedTime}}</span>
+        <span *ngIf="(elapsedTime | async) as time; else zeroSecs">{{time}}</span>
+        <ng-template #zeroSecs><span>0</span></ng-template>
         <span class="seconds"> seconds</span>
     </ion-card-content>
 

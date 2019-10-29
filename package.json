@@ -31,6 +31,7 @@
     "@ionic/pro": "2.0.4",
     "@ionic/storage": "^2.2.0",
     "core-js": "^2.5.4",
+    "geolib": "^3.0.4",
     "ionic-configuration-service": "^6.0.0",
     "ionic-logging-service": "^7.0.0",
     "moment": "^2.24.0",
