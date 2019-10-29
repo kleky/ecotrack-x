@@ -2,10 +2,14 @@ import {Component, EventEmitter} from "@angular/core";
 import {Logger} from "ionic-logging-service";
 import {LogService} from "../../logger/services/log.service";
 import {Geolocation, GeolocationPosition} from "@capacitor/core";
-import {Subscription, timer} from "rxjs";
-import {takeWhile} from "rxjs/operators";
+import {BehaviorSubject, Observable, of, Subscription, timer} from "rxjs";
+import {map, switchMap, takeWhile, tap, withLatestFrom} from "rxjs/operators";
 import { getDistance } from "geolib";
 
+interface LatLng {
+    lat: number;
+    lng: number;
+}
 
 @Component({
     selector: "app-clock",
@@ -15,31 +19,55 @@ import { getDistance } from "geolib";
 export class ClockComponent  {
 
     clockStarted: boolean;
-    speed: number = null;
+    average: number;
+    distanceSamples: Subscription;
+    latestPosition = new BehaviorSubject<GeolocationPosition>(null);
+    elapsedTime: EventEmitter<number> = new EventEmitter<number>();
+    distanceMeters: { distance: number, pos: LatLng }[] = [];
+
     private logger: Logger;
     private geoWatchId: string;
-    mph = true;
-    average: number;
-    startTime: number;
-    eggTimer: Subscription;
-    elapsedTime: EventEmitter<number> = new EventEmitter<number>();
-    distanceMeters: { distance: number, lat: number, lng: number }[] = [];
 
     constructor(private logService: LogService) {
         this.logger = this.logService.getLogger(`Clock`);
     }
 
-    private startTimer() {
-        this.clockStarted = true;
-        this.eggTimer = timer(0, 1000)
-            .pipe(takeWhile(_ => this.clockStarted))
-            .subscribe(time => {
-                this.elapsedTime.emit(time);
-            });
+    private get previousPosition(): LatLng {
+        return this.distanceMeters.length
+            ? this.distanceMeters[this.distanceMeters.length - 1].pos
+            : null;
     }
 
-    private sampleAverage(time: number) {
-        this.average = this.distanceMeters.length
+    private pushDistance(sample: {pos: LatLng, distanceInMeters: number}) {
+        this.distanceMeters.push({
+            distance: sample.distanceInMeters,
+            pos: sample.pos,
+        });
+    }
+    /**
+     * On timer, calculate distance travelled in meters per second
+     */
+    private sampleDistance(interval: number): Observable<{pos: LatLng, distanceInMeters: number, time: number}> {
+        this.clockStarted = true;
+        return  timer(0, interval)
+            .pipe(
+                tap(t => this.elapsedTime.emit(t)),
+                withLatestFrom(this.latestPosition),
+                takeWhile(([time, lastPosition]) => this.clockStarted && lastPosition !== null),
+                tap(t => this.logger.debug("sampleDistance", t)),
+                map(([time, lastPosition]) =>
+                    ({
+                        pos: { lat: lastPosition.coords.latitude, lng: lastPosition.coords.longitude},
+                        distanceInMeters: this.calculateDistance(
+                            this.previousPosition, lastPosition.coords.latitude, lastPosition.coords.longitude),
+                        time
+                    })
+                )
+            );
+    }
+
+    private sampleAverage(time: number): number {
+        return this.distanceMeters.length > 1
             ? this.distanceMeters.map(e => e.distance).reduce((prev, curr) => prev + curr) / (time / 3600)
             : 0;
     }
@@ -59,14 +87,18 @@ export class ClockComponent  {
                 maximumAge: 27000,
                 requireAltitude: false,
             }, this.updatePosition);
-            this.startTimer();
+            this.distanceSamples = this.sampleDistance(1000)
+                .subscribe(sample => {
+                    this.pushDistance(sample);
+                    this.average = this.sampleAverage(sample.time);
+                });
         }
     }
 
     reset(): void {
-        this.eggTimer.unsubscribe();
+        this.distanceSamples.unsubscribe();
         this.distanceMeters = [];
-        this.startTimer();
+        // this.sampleDistance();
     }
 
     private updatePosition = (position: GeolocationPosition, err?: any) => {
@@ -74,29 +106,18 @@ export class ClockComponent  {
             this.logger.error("updatePosition", "Error updating position", err);
         } else {
             this.logger.debug("updatePosition", "", position);
-            this.speed = position.coords.speed;
-            const lastDistance = this.distanceMeters.length ? this.distanceMeters[this.distanceMeters.length - 1] : null;
-            this.distanceMeters.push({
-                distance: lastDistance ? this.getDistanceFromLatLonInMeters(
-                    lastDistance.lat,
-                    lastDistance.lng,
-                    position.coords.latitude,
-                    position.coords.longitude) : 0,
-                lng: position.coords.longitude,
-                lat: position.coords.latitude,
-            });
+            this.latestPosition.next(position);
         }
     }
 
-    private getDistanceFromLatLonInMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
-        return  getDistance({latitude: lat1, longitude: lon1},
-            {latitude: lat2, longitude: lon2}, 1);
+    /**
+     * Calculate distance in meters per second
+     */
+    private calculateDistance(from: LatLng, toLat: number, toLong: number): number {
+        return from !== null
+            ? getDistance({latitude: from.lat, longitude: from.lng},
+            {latitude: toLat, longitude: toLong}, 1)
+            : 0;
 
     }
-
-    private deg2rad(deg: number): number {
-        return deg * (Math.PI / 180);
-    }
-
-
 }
