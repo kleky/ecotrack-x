@@ -4,8 +4,8 @@ import {ClockComponent} from "./clock/clock.component";
 import {RouterModule} from "@angular/router";
 import {SpeedTimerPage} from "./speed-timer-page.component";
 import {IonicModule} from "@ionic/angular";
-import {Geolocation} from "@ionic-native/geolocation/ngx";
 import {ToMphPipe} from "../pipes/to-mph.pipe";
+import {Geolocation, GeolocationPluginWeb} from "@capacitor/core";
 
 @NgModule({
   imports: [

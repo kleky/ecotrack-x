@@ -2,8 +2,8 @@ import {Component, EventEmitter} from "@angular/core";
 import {Logger} from "ionic-logging-service";
 import {LogService} from "../../logger/services/log.service";
 import {Geolocation, GeolocationPosition} from "@capacitor/core";
-import {BehaviorSubject, Observable, of, Subscription, timer} from "rxjs";
-import {map, switchMap, takeWhile, tap, withLatestFrom} from "rxjs/operators";
+import {BehaviorSubject, Observable, Subscription, timer} from "rxjs";
+import {map, takeWhile, tap, withLatestFrom} from "rxjs/operators";
 import { getDistance } from "geolib";
 
 interface LatLng {
@@ -32,46 +32,6 @@ export class ClockComponent  {
         this.logger = this.logService.getLogger(`Clock`);
     }
 
-    private get previousPosition(): LatLng {
-        return this.distanceMeters.length
-            ? this.distanceMeters[this.distanceMeters.length - 1].pos
-            : null;
-    }
-
-    private pushDistance(sample: {pos: LatLng, distanceInMeters: number}) {
-        this.distanceMeters.push({
-            distance: sample.distanceInMeters,
-            pos: sample.pos,
-        });
-    }
-    /**
-     * On timer, calculate distance travelled in meters per second
-     */
-    private sampleDistance(interval: number): Observable<{pos: LatLng, distanceInMeters: number, time: number}> {
-        this.clockStarted = true;
-        return  timer(0, interval)
-            .pipe(
-                tap(t => this.elapsedTime.emit(t)),
-                withLatestFrom(this.latestPosition),
-                takeWhile(([time, lastPosition]) => this.clockStarted && lastPosition !== null),
-                tap(t => this.logger.debug("sampleDistance", t)),
-                map(([time, lastPosition]) =>
-                    ({
-                        pos: { lat: lastPosition.coords.latitude, lng: lastPosition.coords.longitude},
-                        distanceInMeters: this.calculateDistance(
-                            this.previousPosition, lastPosition.coords.latitude, lastPosition.coords.longitude),
-                        time
-                    })
-                )
-            );
-    }
-
-    private sampleAverage(time: number): number {
-        return this.distanceMeters.length > 1
-            ? this.distanceMeters.map(e => e.distance).reduce((prev, curr) => prev + curr) / (time / 3600)
-            : 0;
-    }
-
     startStopClick(): void {
         if (this.clockStarted) {
             // STOP
@@ -83,22 +43,36 @@ export class ClockComponent  {
             // START
             this.geoWatchId = Geolocation.watchPosition({
                 enableHighAccuracy: true,
-                timeout: 30000,
+                timeout: 4000,
                 maximumAge: 27000,
                 requireAltitude: false,
             }, this.updatePosition);
             this.distanceSamples = this.sampleDistance(1000)
                 .subscribe(sample => {
                     this.pushDistance(sample);
-                    this.average = this.sampleAverage(sample.time);
+                    this.average = this.calculateAverage(sample.time);
                 });
         }
     }
 
-    reset(): void {
-        this.distanceSamples.unsubscribe();
-        this.distanceMeters = [];
-        // this.sampleDistance();
+    /**
+     * On timer, calculate distance travelled in meters per second
+     */
+    private sampleDistance(interval: number): Observable<{pos: LatLng, distanceInMeters: number, time: number}> {
+        return timer(0, interval).pipe(
+                tap(t => this.elapsedTime.emit(t)),
+                withLatestFrom(this.latestPosition),
+                takeWhile(([t, lastPosition]) => this.clockStarted),
+                tap(([t, lastPosition]) => this.logger.debug("sampleDistance", lastPosition)),
+                map(([time, lastPosition]) =>
+                    ({
+                        pos: { lat: lastPosition.coords.latitude, lng: lastPosition.coords.longitude},
+                        distanceInMeters: this.calculateDistance(
+                            this.previousPosition, lastPosition.coords.latitude, lastPosition.coords.longitude),
+                        time
+                    })
+                )
+            );
     }
 
     private updatePosition = (position: GeolocationPosition, err?: any) => {
@@ -110,6 +84,24 @@ export class ClockComponent  {
         }
     }
 
+    private get previousPosition(): LatLng {
+        return this.distanceMeters.length
+            ? this.distanceMeters[this.distanceMeters.length - 1].pos
+            : null;
+    }
+    private pushDistance(sample: {pos: LatLng, distanceInMeters: number}) {
+        this.distanceMeters.push({
+            distance: sample.distanceInMeters,
+            pos: sample.pos,
+        });
+    }
+
+    private calculateAverage(time: number): number {
+        return this.distanceMeters.length > 1
+            ? this.distanceMeters.map(e => e.distance).reduce((prev, curr) => prev + curr) / (time / 3600)
+            : 0;
+    }
+
     /**
      * Calculate distance in meters per second
      */
@@ -119,5 +111,11 @@ export class ClockComponent  {
             {latitude: toLat, longitude: toLong}, 1)
             : 0;
 
+    }
+
+    reset(): void {
+        this.distanceSamples.unsubscribe();
+        this.distanceMeters = [];
+        // this.sampleDistance();
     }
 }
