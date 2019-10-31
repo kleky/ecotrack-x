@@ -1,21 +1,28 @@
-import { Injectable } from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {GeolocationOptions, GeolocationPosition} from "@capacitor/core";
+import {Geolocation, GeolocationOptions, GeolocationPosition} from "@capacitor/core";
 
 @Injectable({
-  providedIn: "root"
+    providedIn: "root"
 })
 export class LocationService {
+    private geoWatchId: string;
 
-  constructor() { }
+    clearWatch(): Promise<void> {
+      return Geolocation.clearWatch({id: this.geoWatchId});
+    }
 
-  clearWatch(id: string): Promise<void> {
+    watchPosition(options: GeolocationOptions): Observable<GeolocationPosition> {
+        return new Observable(subscriber => {
+            this.geoWatchId = Geolocation.watchPosition(options, (position, err) => {
+                if (err) {
+                    subscriber.error(err);
+                } else {
+                    subscriber.next(position);
+                }
+            });
 
-  }
 
-  watchPosition(options: GeolocationOptions): Observable<GeolocationPosition> {
-    return new Observable(subscriber => {
-
-    });
-  }
+        });
+    }
 }
