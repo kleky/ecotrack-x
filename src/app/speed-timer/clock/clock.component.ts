@@ -39,8 +39,7 @@ export class ClockComponent implements OnDestroy {
             // STOP
             this.locationService
                 .clearWatch()
-                .then(_ => this.clockStarted = false)
-                .then(_ => this.reset())
+                .then(_ => this.stop())
                 .catch(e => this.logger.error("Failed to clear geolocation watch", e));
         } else {
             // START
