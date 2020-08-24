@@ -66,7 +66,6 @@ export class ClockComponent implements OnDestroy {
             enableHighAccuracy: true,
             timeout: 4000,
             maximumAge: 27000,
-            requireAltitude: false,
         }).pipe(
             tap(e => console.log("watchPosition", e)),
             catchError(_ => of(null))

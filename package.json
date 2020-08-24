@@ -5,8 +5,10 @@
   "homepage": "https://klek.org.uk/ecotrack",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ionic serve",
     "build": "ng build",
+    "build:prod": "ng build --prod",
+    "npx": "npx cap sync && npx cap copy android && npx cap open android",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
