@@ -36,7 +36,7 @@
     "geolib": "^3.0.4",
     "ionic-configuration-service": "^6.0.0",
     "ionic-logging-service": "^7.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
